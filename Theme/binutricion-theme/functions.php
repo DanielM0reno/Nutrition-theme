@@ -24,12 +24,6 @@ function demo_setup() {
 
 	add_theme_support( 'post-thumbnails' );
 
-	register_nav_menus(
-		array(
-			'menu-1' => esc_html__( 'Primary', 'demo' ),
-		)
-	);
-
 	add_theme_support(
 		'html5',
 		array(
@@ -104,7 +98,7 @@ function custom_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'custom_scripts' );
 
-function templatehosteleria_widgets_init() {
+function template_nutri_widget_init() {
 
 	register_sidebar(
 		array(
@@ -154,13 +148,37 @@ function templatehosteleria_widgets_init() {
 		)
 	);
 
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Sidebar de DATOS de contacto', 'templatenutricion' ),
+			'id'            => 'sidebar-datos_contacto',
+			'description'   => esc_html__( 'Añadir widgets aqui', 'templatenutricion' ),
+			'before_widget' => '',
+			'after_widget'  => '',
+			'before_title'  => '',
+			'after_title'   => '',
+		)
+	);
+
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Sidebar de DATOS de contacto footer', 'templatenutricion' ),
+			'id'            => 'sidebar-datos_contacto_footer',
+			'description'   => esc_html__( 'Añadir widgets aqui', 'templatenutricion' ),
+			'before_widget' => '',
+			'after_widget'  => '',
+			'before_title'  => '',
+			'after_title'   => '',
+		)
+	);
+
 	
 }
-add_action( 'widgets_init', 'templatehosteleria_widgets_init' );
+add_action( 'widgets_init', 'template_nutri_widget_init' );
 
 // Widgets desarrollados
-require_once(get_template_directory() .'/widgets/categoria_widget.php');
-require_once(get_template_directory() .'/widgets/imagenes_widget.php');
+require_once(get_template_directory() .'/widgets/contacto_widget.php');
+require_once(get_template_directory() .'/widgets/contacto_widget_simple.php');
 
 //Custom theme functions
 function cc_mime_types($mimes) {
@@ -186,8 +204,43 @@ function wpdocs_styles_method() {
 			background-size: cover;
 			padding: 120px 0;
 			text-shadow: 0px 2px 3px #acacac;
-		  }";
+		  }
+		  #main_about {
+			background: linear-gradient(rgba(40, 58, 90, 0.089), rgba(40, 58, 90, 0.103)), url('".$image."') fixed center center;
+		  }
+		  ";
 
         wp_add_inline_style( 'style', $custom_css );
 }
 add_action( 'wp_enqueue_scripts', 'wpdocs_styles_method' );
+
+
+// Registrar botones de paginas
+
+register_nav_menus(
+	array(
+		'menu-about' => esc_html__( 'Sobre mí', 'demo' ),
+	)
+);
+
+
+class Custom_Walker_Nav_Menu extends Walker_Nav_Menu {
+
+	public function start_lvl(&$output, $depth = 0, $args = null) {
+        // No se genera la etiqueta <ul> del submenú
+    }
+
+    public function end_lvl(&$output, $depth = 0, $args = null) {
+        // No se genera la etiqueta </ul> del submenú
+    }
+
+    public function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+        // Elemento del menú sin <li>
+        $output .= '<a class="btn-learn-more ms-2 mt-2" href="' . $item->url . '">' . $item->title . '</a>';
+    }
+
+    public function end_el(&$output, $item, $depth = 0, $args = null) {
+        // No se genera la etiqueta </li> al final de cada elemento del menú
+    }
+
+}
